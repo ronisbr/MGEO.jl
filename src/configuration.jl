@@ -1,4 +1,4 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 #
 # Description
 #
@@ -318,7 +318,7 @@ when modifying the variable. The variable names will be selected as `Var. 1`,
 
 # Returns
 
-An array of `Design_Variable` with the specified values.
+An array with the configured design variables.
 
 """
 conf_design_vars(bits::Vector{Int64},
