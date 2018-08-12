@@ -10,10 +10,11 @@ export Design_Variable_MGEO_Canonical
 export Design_Variable_MGEO_Var
 export Design_Variable_MGEO_Real
 export MGEO_Structure, Pareto_Point
-export MGEO_Canonical, MGEO_Var
+export MGEO_Canonical, MGEO_Var, MGEO_Real
 
 MGEO_Canonical() = Val{:MGEO_Canonical}
 MGEO_Var()       = Val{:MGEO_Var}
+MGEO_Real()      = Val{:MGEO_Real}
 
 ################################################################################
 #                                  Structures
