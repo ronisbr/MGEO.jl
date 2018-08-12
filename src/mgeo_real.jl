@@ -96,9 +96,8 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
             vars = Vector(map(x->x.min + rand()*(x.max-x.min), mgeod.design_vars))
         end
 
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-        #                   Loop - MGEO Generations
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+        # Loop - MGEO Generations
+        # =======================
 
         genDebug = 0
 

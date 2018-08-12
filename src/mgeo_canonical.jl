@@ -113,9 +113,8 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Canonical},
         # Sample a new string if it is not the first run.
         (run > 1) && rand!(string)
 
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-        #                   Loop - MGEO Generations
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+        # Loop - MGEO Generations
+        # =======================
 
         genDebug = 0
 
