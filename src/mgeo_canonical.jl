@@ -149,7 +149,7 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Canonical},
             f_rank = Vector{sRank}(undef, num_bits)
 
             # Evaluate the objective functions using parallel computing.
-            for i=1:num_bits
+            Threads.@threads for i=1:num_bits
                 # Flip the i-th bit.
                 string_i              = copy(string)
                 @inbounds string_i[i] = !string_i[i]

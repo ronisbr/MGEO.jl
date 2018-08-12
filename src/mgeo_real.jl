@@ -69,7 +69,7 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
     @inbounds for run = 1:mgeod.run_max
         # Sample a new population using a uniform distribution between the
         # minimum and maximum allowed range for each design variable.
-        vars = Vector(map(x->x.min + rand()*(x.max-x.min), mgeod.design_vars))
+        vars = MVector(map(x->x.min + rand()*(x.max-x.min), mgeod.design_vars))
 
         # Call the objective functions.
         (valid, f) = f_obj(vars)
@@ -79,7 +79,8 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
 
         if valid
             # Add the point to the Pareto Frontier.
-            push!(pareto, Pareto_Point{Nv, Nf}(vars, SVector{Nf, Float64}(f)))
+            push!(pareto, Pareto_Point{Nv, Nf}(SVector(vars),
+                                               SVector{Nf, Float64}(f)))
             break
         end
     end
@@ -103,7 +104,8 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
 
         # Sample a new string if it is not the first run.
         if run > 1
-            vars = Vector(map(x->x.min + rand()*(x.max-x.min), mgeod.design_vars))
+            vars = MVector(map(x->x.min + rand()*(x.max-x.min),
+                               mgeod.design_vars))
         end
 
         # Loop - MGEO Generations
@@ -132,7 +134,7 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
             f_rank = Vector{sRank_Real}(undef, Nv)
 
             # Evaluate the objective functions using parallel computing.
-            for i=1:Nv
+            Threads.@threads for i=1:Nv
                 # Modify the i-th design variable.
                 vars_i               = copy(vars)
                 @inbounds vars_i[i] += mgeod.design_vars[i].σ*randn()
@@ -144,7 +146,8 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
                 if valid
                     # Create the candidate point.
                     candidate_point =
-                        Pareto_Point{Nv, Nf}(vars, SVector{Nf, Float64}(f))
+                        Pareto_Point{Nv, Nf}(SVector(vars),
+                                             SVector{Nf, Float64}(f))
 
                     # Add the result to the rank.
                     @inbounds f_rank[i] = sRank_Real(true,
