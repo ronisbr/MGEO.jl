@@ -35,8 +35,7 @@ An array of `Design_Variable` with the specified values.
 conf_design_vars(Nv::Int64, bits::Int64, min::Number, max::Number) =
     conf_design_vars(Val{:MGEO_Canonical}, Nv, bits, min, max)
 
-function conf_design_vars(T::Union{Type{Val{:MGEO_Canonical}},
-								   Type{Val{:MGEO_Var}}},
+function conf_design_vars(T::Type{Val{:MGEO_Canonical}},
                           Nv::Int64,
                           bits::Int64,
                           min::Number,
@@ -52,21 +51,54 @@ function conf_design_vars(T::Union{Type{Val{:MGEO_Canonical}},
     ( min >= max ) && @error("The minimum value must be less than the maximum value for a variable.")
 
     # Create the array of design variables.
-    design_vars = Vector{Design_Variable{T}}(undef, Nv)
+    design_vars = Vector{Design_Variable_MGEO_Canonical}(undef, Nv)
 
     # Full scale for each variable.
     fullscale = (1 << bits) - 1
 
     @inbounds for i=1:Nv
-        design_vars[i] = Design_Variable{T}(bits,
-                                            min,
-                                            max,
-                                            fullscale,
-                                            (i-1)*bits+1,
-                                            "Var. $i")
+        design_vars[i] = Design_Variable_MGEO_Canonical(bits,
+                                                        min,
+                                                        max,
+                                                        fullscale,
+                                                        (i-1)*bits+1,
+                                                        "Var. $i")
     end
 
-    SVector{Nv, Design_Variable{T}}(design_vars)
+    SVector{Nv, Design_Variable_MGEO_Canonical}(design_vars)
+end
+
+function conf_design_vars(T::Type{Val{:MGEO_Var}},
+                          Nv::Int64,
+                          bits::Int64,
+                          min::Number,
+                          max::Number)
+
+    # Check if the number of design variables is greater than 1.
+    ( Nv <= 0 ) && @error("The number of design variables must be higher than 0.")
+
+    # Check if the number of bits are greater than 0.
+    ( bits <= 0 ) && @error("The number of bits must be higher than 0.")
+
+    # Check if the minimum value is smaller than maximum value.
+    ( min >= max ) && @error("The minimum value must be less than the maximum value for a variable.")
+
+    # Create the array of design variables.
+    design_vars = Vector{Design_Variable_MGEO_Var}(undef, Nv)
+
+    # Full scale for each variable.
+    fullscale = (1 << bits) - 1
+
+    @inbounds for i=1:Nv
+        design_vars[i] = Design_Variable_MGEO_Var(bits,
+                                                  min,
+                                                  max,
+                                                  fullscale,
+                                                  (i-1)*bits+1,
+                                                  "Var. $i")
+    end
+
+    SVector{Nv, Design_Variable_MGEO_Var}(design_vars)
 end
 
 """
@@ -99,8 +131,7 @@ conf_design_vars(bits::Vector{Int64},
     {T1<:Number, T2<:Number} =
     conf_design_vars(Val{:MGEO_Canonical}, bits, min, max, var_names)
 
-function conf_design_vars(T::Union{Type{Val{:MGEO_Canonical}},
-								   Type{Val{:MGEO_Var}}},
+function conf_design_vars(T::Type{Val{:MGEO_Canonical}},
                           bits::Vector{Int64},
                           min::Vector{T1},
                           max::Vector{T2},
@@ -128,16 +159,56 @@ function conf_design_vars(T::Union{Type{Val{:MGEO_Canonical}},
         # Check if the min value is smaller than max.
         ( min[i] >= max[i] ) && @error("The minimum value must be less than the maximum value for a variable.")
 
-        design_vars[i] = Design_Variable{T}(bits[i],
-                                            min[i],
-                                            max[i],
-                                            (UInt64(1) << bits[i]) - 1,
-                                            num_bits+1,
-                                            var_names[i])
+        design_vars[i] = Design_Variable_MGEO_Canonical(bits[i],
+                                                        min[i],
+                                                        max[i],
+                                                        (UInt64(1) << bits[i]) - 1,
+                                                        num_bits+1,
+                                                        var_names[i])
         num_bits += bits[i]
     end
 
-    SVector{Nv, Design_Variable{T}}(design_vars)
+    SVector{Nv, Design_Variable_MGEO_Canonical}(design_vars)
+end
+
+function conf_design_vars(T::Type{Val{:MGEO_Var}},
+                          bits::Vector{Int64},
+                          min::Vector{T1},
+                          max::Vector{T2},
+                          var_names::Vector{String}) where
+ 	{T1<:Number, T2<:Number}
+
+    # Check if the size of arrays is correct.
+    Nv = length(bits)
+
+    ( ( length(min)       != Nv ) ||
+      ( length(max)       != Nv ) ||
+      ( length(var_names) != Nv ) ) &&
+    @error("The size of the vectors does not match.")
+
+    # Number of bits.
+    num_bits = 0
+
+    # Create the array of design variables.
+    design_vars = Vector{Design_Variable{T}}(undef, Nv)
+
+    for i = 1:Nv
+        # Check if the number of bits are larger than 0.
+        ( bits[i] <= 0 ) && @error("The number of bits must be higher than 0.")
+
+        # Check if the min value is smaller than max.
+        ( min[i] >= max[i] ) && @error("The minimum value must be less than the maximum value for a variable.")
+
+        design_vars[i] = Design_Variable_MGEO_Var(bits[i],
+                                                  min[i],
+                                                  max[i],
+                                                  (UInt64(1) << bits[i]) - 1,
+                                                  num_bits+1,
+                                                  var_names[i])
+        num_bits += bits[i]
+    end
+
+    SVector{Nv, Design_Variable_MGEO_Var}(design_vars)
 end
 
 """
@@ -210,7 +281,7 @@ function conf_mgeo(Nf::Int64,
                    τ::Float64,
                    ngen_max::Int64,
                    run_max::Int64,
-                   design_vars::SVector{Nv, Design_Variable{T}},
+                   design_vars::SVector{Nv, T},
                    mgeo_eps::Float64 = 1e-10) where {Nv,T}
 
     # Check if the number of objective functions is higher than 1.

@@ -41,7 +41,7 @@ variables, and `valid_point` is a boolean value that indicates if vars yield to
 a valid point.
 
 """
-function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Canonical}},
+function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Canonical},
                   f_obj::Function,
                   show_debug::Bool = false) where {Nv, Nf}
     # Pareto frontier.

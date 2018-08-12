@@ -49,7 +49,7 @@ function convert(::Type{Matrix},
 end
 
 """
-    function pf_to_csv(pareto::Vector{Pareto_Point{Nv,Nf}}, filename::String, design_vars::Vector{Design_Variable}) where {Nv,Nf}
+    function pf_to_csv(pareto::Vector{Pareto_Point{Nv,Nf}}, filename::String, design_vars::SVector{Nv,T}) where {Nv,Nf,T}
 
 Save the Pareto frontier `pareto` to a CSV file `filename`.
 
@@ -62,7 +62,7 @@ Save the Pareto frontier `pareto` to a CSV file `filename`.
 """
 function pf_to_csv(pareto::Vector{Pareto_Point{Nv,Nf}},
                    filename::String,
-                   design_vars::SVector{Nv,Design_Variable{T}}) where {Nv,Nf,T}
+                   design_vars::SVector{Nv,T}) where {Nv,Nf,T}
 
     # Convert Pareto frontier.
     pf_array = convert(Matrix, pareto)
@@ -120,7 +120,7 @@ end
 ################################################################################
 
 """
-    function bitstrtonum(design_vars::SVector{Nv, Design_Variable{T}}, string::BitArray, factors::AbstractVector) where {Nv,T}
+    function bitstrtonum(design_vars::SVector{Nv, T}, string::BitArray, factors::AbstractVector) where {Nv,T}
 
 Convert the bit string `string` to real values using the information of the
 design variables in `design_vars`.
@@ -136,7 +136,7 @@ design variables in `design_vars`.
 An array of `Float64` with the real values of the design variables.
 
 """
-function bitstrtonum(design_vars::SVector{Nv, Design_Variable{T}},
+function bitstrtonum(design_vars::SVector{Nv, T},
                      string::BitArray,
                      factors::AbstractVector) where {Nv,T}
 

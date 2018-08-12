@@ -7,6 +7,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 export Design_Variable, MGEO_Structure, Pareto_Point
+export MGEO_Canonical, MGEO_Var
 
 MGEO_Canonical() = Val{:MGEO_Canonical}
 MGEO_Var()       = Val{:MGEO_Var}
@@ -33,8 +34,16 @@ Structure that defines the limits of the design variables.
 * `name`: Name of the variable.
 
 """
-struct Design_Variable{T<:Union{Val{:MGEO_Canonical},
-								Val{:MGEO_Var}}}
+struct Design_Variable_MGEO_Canonical
+	bits::Int64
+	min::Float64
+	max::Float64
+	full_scale::Int64
+	index::Int64
+	name::AbstractString
+end
+
+struct Design_Variable_MGEO_Var
 	bits::Int64
 	min::Float64
 	max::Float64
@@ -64,7 +73,7 @@ struct MGEO_Structure{Nv, Nf, T}
     τ::Float64
     ngen_max::Int64
     run_max::Int64
-    design_vars::SVector{Nv, Design_Variable{T}}
+    design_vars::SVector{Nv, T}
     mgeo_eps::Float64
 end
 
