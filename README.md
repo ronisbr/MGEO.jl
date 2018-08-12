@@ -8,8 +8,12 @@ Chagas](http://www.ronanarraes.com) at [INPE](http://www.inpe.br)
 
 The code was based on [**MGEOCpp**](https://github.com/ronisbr/mgeocpp)
 
-MGEO
-----
+## Requirements
+
+* Julia >= 0.7
+* StaticArrays >= 0.8.3
+
+## MGEO
 
 GEO is an evolutionary algorithm developed at [INPE](http://www.inpe.br) [1]
 that, along with its multiobjective version (M-GEO), has already been
@@ -25,71 +29,13 @@ successfully applied to a myriad of optimization engineering problems:
   constellations that minimize the number of spacecraft, the mean orbital
   altitude, and the area not accessible [7].
 
-The flowchart of MGEO is [7]:
+## Documentation
 
-![M-GEO Flowchart](./figs/mgeo-flowchart.png "M-GEO flowchart [7]")
+The functions of the methods are highly documented using Julia documentation
+systems. However, a comprehensive documentation of the package is not available
+yet.
 
-The library **MGEOjulia** codes in Julia the algorithm presented in the MGEO
-flowchart.
-
-Usage
------
-
-The minimal working code for **MGEO.jl** is:
-
-```julia
-using MGEO
-
-designVars      = conf_design_vars({list_of_bits}, {list_of_minimum_values}, {list_of_maximum_values}, {list_of_names})
-mgeod           = conf_mgeo(Nf, tau, ngen_max, run_max, design_vars)
-pareto_frontier = mgeo_run(mgeoData, f_obj)
-pf_to_csv(pareto_frontier, "output.csv", design_vars)
-```
-where
-
-| Parameter                              | Description                                               | Type                                   | Example                                 |
-| -------------------------------------- | --------------------------------------------------------- |:--------------------------------------:|:---------------------------------------:|
-| `Nf`                                   | Number of objective functions.                            | `Int64`                                | 2                                       |
-| `tau`                                  | Parameter to set the determinism of the search.           | `Float64`                              | 3.0                                     |
-| `ngen_max`                             | Maximum number of generations that will be created.       | `Int64`                                | 30000                                   |
-| `runMax`                               | Maximum number of independent runs.                       | `Int64`                                | 50                                      |
-| `list_of_bits`                         | Number of bits for each design variable.                  | `Vector{Int64}`                        | [8, 8]                                  |
-| `list_of_minimum_values`               | Minimum values for each design variable.                  | `Vector{T<:Number}`                    | [-10.0, -5.0]                           |
-| `list_of_maximum_values`               | Maximum values for each design variable.                  | `Vector{T<:Number}`                    | [5.0, 2.0]                              |
-| `list_of_names`                        | List with the design variable names (OPTIONAL).           | `Vector{Strings}`                      | ["Variable 1", "Variable 2"]            |
-
-and `f_obj` must be a user-defined function that receives the design variables
-and computes the objective functions. It must be defined as follows:
-
-```
-function f_obj(vars)
-
-    1) Read the design variables vars[1], vars[2], vars[3], ..., vars[N]
-    2) Compute the objective functions f[1], f[2], f[3], ..., f[nf]
-    3) Return (valid, f), where variable valid is false if the objective
-       function evaluation was not performed correctly or true otherwise.
-
-end
-```
-
-Julia version
--------------
-
-The package is tested against Julia **v0.7**.
-
-License
--------
-
-This project is released under the **BSD 3-Clause License** (see
-[LICENSE.md](./LICENSE.md) file).
-
-Authors
--------
-
-[Ronan Arraes Jardim Chagas](http://www.inpe.br/ete/dse/ronan) created MGEOjulia.
-
-References
-----------
+## References
 
 [1] F. L. de Sousa, F. M. Ramos, P. Paglione, and R. M. Girardi, "**New
 stochastic algorithm for design optimization**," *AIAA Journal*, vol. 41, no. 9,
