@@ -1,0 +1,11 @@
+name = "MGEO"
+uuid = "16b43e94-9cbd-11e8-382f-951ad8972bfe"
+authors = ["Ronan Arraes Jardim Chagas <ronan.arraes@inpe.br>"]
+version = "0.1.0"
+
+[deps]
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
