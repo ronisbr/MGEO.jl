@@ -8,8 +8,6 @@ using LinearAlgebra
 using StaticArrays
 using Random
 
-export Design_Variable, MGEO_Structure, Pareto_Point
-
 ################################################################################
 #                                    Files
 ################################################################################

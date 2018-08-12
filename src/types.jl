@@ -6,6 +6,8 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+export Design_Variable, MGEO_Structure, Pareto_Point
+
 MGEO_Canonical() = Val{:MGEO_Canonical}
 MGEO_Var()       = Val{:MGEO_Var}
 
