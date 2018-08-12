@@ -2,16 +2,16 @@
 #
 # Description
 #
-#   Function to run the MGEO.
+#   Function to run the MGEO Var.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 export mgeo_run
 
 """
-    function mgeo_run(mgeod::MGEO_Structure, f_obj::Function; show_debug::Bool = false)
+    function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Var}}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
 
-Run the MGEO configured in `mgeod` using the objective functions `f_obj`.
+Run the MGEO Var configured in `mgeod` using the objective functions `f_obj`.
 
 # Args
 
@@ -40,7 +40,7 @@ variables, and `valid_point` is a boolean value that indicates if vars yield to
 a valid point.
 
 """
-function mgeo_run(mgeod::MGEO_Structure{Nv, Nf},
+function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Var}},
                   f_obj::Function,
                   show_debug::Bool = false) where {Nv, Nf}
     # Pareto frontier.
@@ -181,39 +181,53 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf},
             # ========
             #
             # The points will be ranked according to the selected objective
-            # function (chosen_func).
+            # function (`chosen_func`).
             #
             # Notice that the invalid points will be placed after the valid
             # ones.
+            #
+            # In this case (MGEO Var), we fill flip 1 bit per design variable.
 
-            sort!(f_rank, lt=(a,b)->begin
-                      # Check if data is valid.
-                      if (a.valid && b.valid)
-                          return a.f < b.f
-                      elseif (a.valid)
-                          return true
-                      else
-                          return false
+            @inbounds for i = 1:Nv
+                # Get the position of the i-th design variable in the string.
+                bit_i = mgeod.design_vars[i].index
+                bit_f = bit_i + mgeod.design_vars[i].bits - 1
+
+                # Get the rank relative to the bit flip of the i-th design
+                # variable.
+                f_rank_dv = @view f_rank[bit_i:bit_f]
+
+                # Sort the rank.
+                sort!(f_rank_dv, lt=(a,b)->begin
+                          # Check if data is valid.
+                          if (a.valid && b.valid)
+                              return a.f < b.f
+                          elseif (a.valid)
+                              return true
+                          else
+                              return false
+                          end
                       end
-                  end
-                 )
+                     )
 
-            # Choose a bit to be changed for the new generation.
-            bit_accepted = false
+                # Choose a bit to be changed for the new generation.
+                bit_accepted = false
 
-            while !bit_accepted
-                # Sample a valid bit in the string.
-                b_sample = rand(1:num_valid_points)
+                while !bit_accepted
+                    # Sample a valid bit in the string considering the current
+                    # design variable.
+                    b_sample = rand(bit_i:bit_f) - bit_i + 1
 
-                # Accept the change with probability r^(-τ), where r is the
-                # rank of the bit.
-                Pk = b_sample^(-mgeod.τ)
+                    # Accept the change with probability r^(-τ), where r is the
+                    # rank of the bit.
+                    Pk = b_sample^(-mgeod.τ)
 
-                if rand() <= Pk
-                    # The bit is accepted, then exit the loop.
-                    @inbounds string[f_rank[b_sample].index] =
-                              !string[f_rank[b_sample].index]
-                    bit_accepted = true
+                    if rand() <= Pk
+                        # The bit is accepted, then exit the loop.
+                        string[f_rank_dv[b_sample].index] =
+                            !string[f_rank_dv[b_sample].index]
+                        bit_accepted = true
+                    end
                 end
             end
         end
