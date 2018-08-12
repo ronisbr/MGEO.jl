@@ -2,16 +2,16 @@
 #
 # Description
 #
-#   Function to run the MGEO Var.
+#   Function to run the MGEO Real.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 export mgeo_run
 
 """
-    function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Var}}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
+    function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
 
-Run the MGEO Var configured in `mgeod` using the objective functions `f_obj`.
+Run the MGEO Real configured in `mgeod` using the objective functions `f_obj`.
 
 # Args
 
@@ -40,45 +40,26 @@ variables, and `valid_point` is a boolean value that indicates if vars yield to
 a valid point.
 
 """
-function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Var},
+function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
                   f_obj::Function,
                   show_debug::Bool = false) where {Nv, Nf}
-
     # Pareto frontier.
     pareto = Pareto_Point{Nv,Nf}[]
 
     # Maximum number of generations per run.
     ngen_max_per_run = floor(mgeod.ngen_max/mgeod.run_max)
 
-    # Get the number of bits the string must have by summing the bits for each
-    # design variable. Also, get the maximum number of bits in one variable so
-    # that we can compute the `factors` vector to convert the string of bits to
-    # a real number.
-    num_bits    = 0
-    max_bit_num = 0
-
-    @inbounds for k = 1:Nv
-        num_bits += mgeod.design_vars[k].bits
-        max_bit_num = max(max_bit_num, mgeod.design_vars[k].bits)
-    end
-
-    # Compute the vector with the interger factor to convert the string of bits
-    # into a real number.
-    factors = SVector{max_bit_num, Int64}(2 .^collect(0:1:(max_bit_num-1)))
-
-    # Create the string.
-    string = BitArray(undef,num_bits)
+    # Vector to store the population.
+    vars = Vector{Float64}(undef, Nv)
 
     # Initialization of Pareto Frontier
     # =================================
 
     # Initialize the string with one valid point in the Pareto Frontier.
     @inbounds for run = 1:mgeod.run_max
-        # Sample a new string.
-        rand!(string)
-
-        # Convert string to real numbers.
-        vars = bitstrtonum(mgeod.design_vars, string, factors)
+        # Sample a new population using a uniform distribution between the
+        # minimum and maximum allowed range for each design variable.
+        vars = Vector(map(x->x.min + rand()*(x.max-x.min), mgeod.design_vars))
 
         # Call the objective functions.
         (valid, f) = f_obj(vars)
@@ -111,7 +92,9 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Var},
         end
 
         # Sample a new string if it is not the first run.
-        (run > 1) && rand!(string)
+        if run > 1
+            vars = Vector(map(x->x.min + rand()*(x.max-x.min), mgeod.design_vars))
+        end
 
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
         #                   Loop - MGEO Generations
@@ -133,23 +116,20 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Var},
             # adaptability and to assemble the rank.
             chosen_func = rand(1:Nf)
 
-            # List of all points created after flipping the bits.
-            candidate_points = Vector{Pareto_Point{Nv,Nf}}(undef,num_bits)
+            # List of all points created after the modification of population.
+            candidate_points = Vector{Pareto_Point{Nv,Nf}}(undef,Nv)
 
             # Array to sort the candidate points.
-            f_rank = Vector{sRank}(undef, num_bits)
+            f_rank = Vector{sRank_Real}(undef, Nv)
 
             # Evaluate the objective functions using parallel computing.
-            for i=1:num_bits
-                # Flip the i-th bit.
-                string_i              = copy(string)
-                @inbounds string_i[i] = !string_i[i]
-
-                # Convert the string into real values.
-                vars = bitstrtonum(mgeod.design_vars, string_i, factors)
+            for i=1:Nv
+                # Modify the i-th design variable.
+                vars_i               = copy(vars)
+                @inbounds vars_i[i] += mgeod.design_vars[i].σ*randn()
 
                 # Evaluate the objective functions.
-                (valid, f) = f_obj(vars)
+                (valid, f) = f_obj(vars_i)
 
                 # Check if the solution is valid.
                 if valid
@@ -158,10 +138,13 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Var},
                         Pareto_Point{Nv, Nf}(vars, SVector{Nf, Float64}(f))
 
                     # Add the result to the rank.
-                    @inbounds f_rank[i] = sRank(true, i, f[chosen_func])
+                    @inbounds f_rank[i] = sRank_Real(true,
+                                                     i,
+                                                     vars_i[i],
+                                                     f[chosen_func])
                     @inbounds candidate_points[i] = candidate_point
                 else
-                    @inbounds f_rank[i] = sRank(false, i, 0.0)
+                    @inbounds f_rank[i] = sRank_Real(false, i, vars_i[i], 0.0)
                 end
             end
 
@@ -186,49 +169,35 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Var},
             #
             # Notice that the invalid points will be placed after the valid
             # ones.
-            #
-            # In this case (MGEO Var), we fill flip 1 bit per design variable.
 
-            @inbounds for i = 1:Nv
-                # Get the position of the i-th design variable in the string.
-                bit_i = mgeod.design_vars[i].index
-                bit_f = bit_i + mgeod.design_vars[i].bits - 1
-
-                # Get the rank relative to the bit flip of the i-th design
-                # variable.
-                f_rank_dv = @view f_rank[bit_i:bit_f]
-
-                # Sort the rank.
-                sort!(f_rank_dv, lt=(a,b)->begin
-                          # Check if data is valid.
-                          if (a.valid && b.valid)
-                              return a.f < b.f
-                          elseif (a.valid)
-                              return true
-                          else
-                              return false
-                          end
+            sort!(f_rank, lt=(a,b)->begin
+                      # Check if data is valid.
+                      if (a.valid && b.valid)
+                          return a.f < b.f
+                      elseif (a.valid)
+                          return true
+                      else
+                          return false
                       end
-                     )
+                  end
+                 )
 
-                # Choose a bit to be changed for the new generation.
-                bit_accepted = false
+            # Choose a variable to be changed for the new generation.
+            var_accepted = false
 
-                while !bit_accepted
-                    # Sample a valid bit in the string considering the current
-                    # design variable.
-                    b_sample = rand(bit_i:bit_f) - bit_i + 1
+            while !var_accepted
+                # Sample a valid point.
+                v_sample = rand(1:num_valid_points)
 
-                    # Accept the change with probability r^(-τ), where r is the
-                    # rank of the bit.
-                    Pk = b_sample^(-mgeod.τ)
+                # Accept the change with probability r^(-τ), where r is the
+                # rank of the bit.
+                Pk = v_sample^(-mgeod.τ)
 
-                    if rand() <= Pk
-                        # The bit is accepted, then exit the loop.
-                        string[f_rank_dv[b_sample].index] =
-                            !string[f_rank_dv[b_sample].index]
-                        bit_accepted = true
-                    end
+                if rand() <= Pk
+                    # The bit is accepted, then exit the loop.
+                    @inbounds vars[f_rank[v_sample].index] =
+                        f_rank[v_sample].var_value
+                    var_accepted = true
                 end
             end
         end
