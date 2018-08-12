@@ -193,7 +193,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Canonical}},
     num_bits = 0
 
     # Create the array of design variables.
-    design_vars = Vector{Design_Variable{T}}(undef, Nv)
+    design_vars = Vector{Design_Variable_MGEO_Canonical}(undef, Nv)
 
     for i = 1:Nv
         # Check if the number of bits are larger than 0.
@@ -233,7 +233,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Var}},
     num_bits = 0
 
     # Create the array of design variables.
-    design_vars = Vector{Design_Variable{T}}(undef, Nv)
+    design_vars = Vector{Design_Variable_MGEO_Var}(undef, Nv)
 
     for i = 1:Nv
         # Check if the number of bits are larger than 0.
@@ -271,7 +271,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
     @error("The size of the vectors does not match.")
 
     # Create the array of design variables.
-    design_vars = Vector{Design_Variable{T}}(undef, Nv)
+    design_vars = Vector{Design_Variable_MGEO_Real}(undef, Nv)
 
     for i = 1:Nv
         # Check if the min value is smaller than max.
