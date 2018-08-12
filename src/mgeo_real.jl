@@ -190,7 +190,7 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
                 v_sample = rand(1:num_valid_points)
 
                 # Accept the change with probability r^(-τ), where r is the
-                # rank of the bit.
+                # rank of the sampled variable.
                 Pk = v_sample^(-mgeod.τ)
 
                 if rand() <= Pk
