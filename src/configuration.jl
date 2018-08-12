@@ -359,7 +359,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
 end
 
 """
-    function conf_mgeo(Nf::Int64, τ::Float64, ngen_max::Int64, run_max::Int64, design_vars::SVector{Nv, Design_Variable{T}}, mgeo_eps::Float64 = 1e-10) where {Nv,T}
+    function conf_mgeo(Nf::Int64, τ::Float64, ngen_max::Int64, run_max::Int64, design_vars::SVector{Nv, T}, mgeo_eps::Float64 = 1e-10) where {Nv,T}
 
 Configure the MGEO.
 
