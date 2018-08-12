@@ -5,6 +5,16 @@
 #   Function to run the MGEO Canonical.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# References
+#
+#   [1] Galski, R.L (2006). Desenvolvimento de versões aprimoradas híbridas,
+#       paralela e multiobjetivo do método da otimização extrema generalizada e
+#       sua aplicação no projeto de sistemas espaciais (INPE-14795-TDI/1238).
+#       PhD Thesis, Instituto Nacional de Pesquisas Espaciais, São José dos
+#       Campos, SP, Brazil (in Portuguese).
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 export mgeo_run
 
@@ -12,7 +22,7 @@ export mgeo_run
     function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Canonical}}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
 
 Run the MGEO Canonical configured in `mgeod` using the objective functions
-`f_obj`.
+`f_obj`. The algorithm was based in [1].
 
 # Args
 

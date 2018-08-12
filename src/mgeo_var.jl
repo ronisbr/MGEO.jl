@@ -5,6 +5,15 @@
 #   Function to run the MGEO Var.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# References
+#
+#   [1] Lopes, I. M. L (2013). Uma abordagem multi-objetivo para a otimização de
+#       trajetórias de uma vela solar (INPE-15384-TDI/1403). PhD Thesis,
+#       Instituto Nacional de Pesquisas Espaciais, São José dos Campos, SP,
+#       Brazil (in Portuguese).
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 export mgeo_run
 
@@ -12,6 +21,7 @@ export mgeo_run
     function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Var}}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
 
 Run the MGEO Var configured in `mgeod` using the objective functions `f_obj`.
+The algorithm was based in [1].
 
 # Args
 
