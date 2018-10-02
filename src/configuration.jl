@@ -333,10 +333,10 @@ function conf_design_vars(T::Union{Type{Val{:MGEO_Canonical}},
                           max::Vector{T2}) where {T1<:Number, T2<:Number}
 
     # Create an array with variable names.
-    var_names = Array(String, length(bits))
+    var_names = Array{String}(undef, length(bits))
 
-    for i=1:length(varNames)
-        varNames[i] = "Var. $i"
+    for i=1:length(var_names)
+        var_names[i] = "Var. $i"
     end
 
     conf_design_vars(T, bits, min, max, var_names)
@@ -349,10 +349,10 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
     {T1<:Number, T2<:Number, T3<:Number}
 
     # Create an array with variable names.
-    var_names = Array(String, length(bits))
+    var_names = Array{String}(undef, length(bits))
 
-    for i=1:length(varNames)
-        varNames[i] = "Var. $i"
+    for i=1:length(var_names)
+        var_names[i] = "Var. $i"
     end
 
     conf_design_vars(T, min, max, σ, var_names)
