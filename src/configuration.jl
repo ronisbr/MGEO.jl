@@ -349,7 +349,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
     {T1<:Number, T2<:Number, T3<:Number}
 
     # Create an array with variable names.
-    var_names = Array{String}(undef, length(bits))
+    var_names = Array{String}(undef, length(min))
 
     for i=1:length(var_names)
         var_names[i] = "Var. $i"
