@@ -17,10 +17,6 @@ export conf_design_vars, conf_mgeo, convert, pf_to_csv, sort_pareto!
 
 Convert the structure that stores the Pareto frontier `pareto` to an array.
 
-# Args
-
-* `paretoFrontier`: Pareto frontier.
-
 # Returns
 
 A matrix of `Float64` in which the i-th line of the array is
@@ -51,13 +47,8 @@ end
 """
     function pf_to_csv(pareto::Vector{Pareto_Point{Nv,Nf}}, filename::String, design_vars::SVector{Nv,T}) where {Nv,Nf,T}
 
-Save the Pareto frontier `pareto` to a CSV file `filename`.
-
-# Args
-
-* `pareto`: Pareto frontier (array of `Pareto_Point`).
-* `filename`: File name.
-* `design_vars`: Information about design variables.
+Save the Pareto frontier `pareto` to a CSV file `filename` considering the
+configuration of the design variables in `design_vars`.
 
 """
 function pf_to_csv(pareto::Vector{Pareto_Point{Nv,Nf}},
@@ -90,12 +81,9 @@ end
 """
     function sort_pareto!(pareto::Vector{Pareto_Point{Nv,Nf}}, fobj::Int64) where {Nv,Nf}
 
-Sort the points in Pareto frontier `pareto` using the objective function `fobj`.
-
-# Args
-
-* `pareto`: Pareto frontier.
-* `fobj`: Objective function used to sort.
+Sort the points in Pareto frontier `pareto` using the objective function index
+`fobj`. Notice that the sort will be performed in place, modifying the vector
+`pareto`.
 
 """
 function sort_pareto!(pareto::Vector{Pareto_Point{Nv,Nf}},
@@ -123,13 +111,7 @@ end
     function bitstrtonum(design_vars::SVector{Nv, T}, string::BitArray, factors::AbstractVector) where {Nv,T}
 
 Convert the bit string `string` to real values using the information of the
-design variables in `design_vars`.
-
-# Args
-
-* `design_vars`: Array with the description of design variables.
-* `string`: Bit string.
-* `factors`: Integer factors to convert the variable.
+design variables in `design_vars` and the integer factors `factors`.
 
 # Returns
 
@@ -162,13 +144,9 @@ end
 """
     function check_dominance!(pareto::Vector{Pareto_Point{Nv,Nf}}, candidate::Pareto_Point{Nv,Nf}, mgeod::MGEO_Structure{Nv,Nf}) where {Nv, Nf}
 
-Check the dominance of the point `candidate` in the Pareto frontier `pareto`.
-
-# Args
-
-* `pareto`: Pareto frontier.
-* `candidate`: Candidate point to be added in the frontier.
-* `mgeod`: MGEO structure (see `MGEO_Structure`).
+Check the dominance of the point `candidate` in the Pareto frontier `pareto`
+using the MGEO configuration in `mgeod`. Notice that the variable `pareto` can
+be modified depending on the dominance of the `candidate`.
 
 # Returns
 

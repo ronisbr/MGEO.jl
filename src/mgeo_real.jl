@@ -23,11 +23,6 @@ export mgeo_run
 Run the MGEO Real configured in `mgeod` using the objective functions `f_obj`.
 The algorithm was based in [1].
 
-# Args
-
-* `mgeod`: Structure with the configurations of MGEO (see `MGEO_Structure`).
-* `f_obj`: Objective functions.
-
 # Keywords
 
 * `show_debug`: Print debug information (**Default** = `true`).
@@ -36,7 +31,7 @@ The algorithm was based in [1].
 
 The Pareto frontier, which is an array of `Pareto_Point`.
 
-##### Remarks
+# Remarks
 
 The objective function must have the following signature
 

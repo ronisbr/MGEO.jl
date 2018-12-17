@@ -34,16 +34,6 @@ using the following equation:
 in which `x` is the design variable and `N(a,b)` is a sample from a Normal
 distribution with mean `a` and standard deviation `b`.
 
-# Args
-
-* `T`: (OPTIONAL) Type of algorithm (**Default**: `MGEO_Canonical()`).
-* `Nv`: The number of design variables.
-* `bits`: The number of bits for each variable.
-* `min`: The minimum value for all the design variables.
-* `max`: The maximum value for all the design variables.
-
-* `σ`: Standard deviation used when modifying a variable in MGEO Real.
-
 # Returns
 
 An array with the configured design variables.
@@ -169,17 +159,6 @@ then the design variable will be perturbed using the following equation:
 in which `x` is the design variable value and `N(a,b)` is a sample from a Normal
 distribution with mean `a` and standard deviation `b`. If `perc_perturbation` is
 `nothing`, then it set to `true` for all variables.
-
-# Args
-
-* `T`: (OPTIONAL) Type of algorithm (**Default**: `MGEO_Canonical()`).
-* `bits`: List containing the number of bits for each design variable.
-* `min`: List containing the minimum of each design variable.
-* `max`: List containing the maximum of each design variable.
-* `var_names`: List containing the name of each design variable.
-
-* `σ`: List containing the standard deviations used when modifying a variable in
-       MGEO Real.
 
 # Returns
 
@@ -338,16 +317,6 @@ using the following equation:
 
 in which `x` is the design variable and `N(a,b)` is a sample from a Normal
 distribution with mean `a` and standard deviation `b`.
-
-# Args
-
-* `T`: (OPTIONAL) Type of algorithm (**Default**: `MGEO_Canonical()`).
-* `bits`: List containing the number of bits for each design variable.
-* `min`: List containing the minimum of each design variable.
-* `max`: List containing the maximum of each design variable.
-
-* `σ`: List containing the standard deviations used when modifying a variable in
-       MGEO Real.
 
 # Returns
 
