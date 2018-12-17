@@ -167,14 +167,14 @@ function check_dominance!(pareto::Vector{Pareto_Point{Nv,Nf}},
     # Loop through the entire list of Pareto points.
     add_point = true
 
-    for p=1:length(pareto)
+    @inbounds for p=1:length(pareto)
         # Variable to check if the point in the Pareto frontier list is
         # dominated by the candidate.
         point_dominated     = true
         candidate_dominated = true
 
         # Loop through objective functions.
-        @inbounds for i=1:Nf
+        for i=1:Nf
             # If both objective functions are equal (given `mgeo_eps`), then
             # nothing can be stated about the dominance of both points.
             if abs(candidate.f[i] - pareto[p].f[i]) < mgeod.mgeo_eps
