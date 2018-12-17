@@ -136,7 +136,11 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
             # Evaluate the objective functions using parallel computing.
             Threads.@threads for i=1:Nv
                 # Modify the i-th design variable.
-                @inbounds new_var_i = vars[i] + mgeod.design_vars[i].σ*randn()
+                @inbounds if !mgeod.design_vars[i].perc_perturbation
+                    new_var_i = vars[i] + mgeod.design_vars[i].σ*randn()
+                else
+                    new_var_i = vars[i] + (mgeod.design_vars[i].σ*vars[i])*randn()
+                end
 
                 # Make sure that the new value lies within the defined interval.
                 @inbounds if new_var_i < mgeod.design_vars[i].min

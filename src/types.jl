@@ -82,6 +82,10 @@ Structure that defines the design variables for MGEO Real.
 * `max`: Maximum allowed value for the design variable.
 * `σ`: Standard deviation used when modifying the variable.
 * `name`: Name of the variable.
+* `perc_perturbation`: If `true`, then the state will be perturbed considering a
+                       Gaussian distribution with mean 0 and standard deviation
+                       `σ⋅x`, in which `x` is the design variable value.
+                       Otherwise, the standard deviation will be `σ`.
 
 """
 struct Design_Variable_MGEO_Real
@@ -89,6 +93,7 @@ struct Design_Variable_MGEO_Real
 	max::Float64
     σ::Float64
 	name::AbstractString
+    perc_perturbation::Bool
 end
 
 """

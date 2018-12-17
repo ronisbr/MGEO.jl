@@ -19,12 +19,20 @@ the same number of bits `bits`, and maximum and minimum values `min` and `max`.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    function conf_design_vars(Val{:MGEO_Real}, Nv::Int64, min::Number, max::Number, σ::Number)
+    function conf_design_vars(Val{:MGEO_Real}, Nv::Int64, min::Number, max::Number, σ::Number, perc_perturbation::Bool = true)
 
 This function configures `Nv` design variables in which all of them will have
 the same maximum and minimum values `min` and `max`, and the same standard
 deviation `σ` used when modifying the variables. This is used for MGEO Real
 algorithm.
+
+If `perc_perturbation` is `true`, then the design variable will be perturbed
+using the following equation:
+
+    x = x + N(0, σ⋅x),
+
+in which `x` is the design variable and `N(a,b)` is a sample from a Normal
+distribution with mean `a` and standard deviation `b`.
 
 # Args
 
@@ -114,7 +122,8 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
                           Nv::Int64,
                           min::Number,
                           max::Number,
-                          σ::Number)
+                          σ::Number,
+                          perc_perturbation::Bool = true)
 
     # Check if the number of design variables is greater than 1.
     ( Nv <= 0 ) && @error("The number of design variables must be higher than 0.")
@@ -129,7 +138,8 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
     design_vars = Vector{Design_Variable_MGEO_Real}(undef, Nv)
 
     @inbounds for i=1:Nv
-        design_vars[i] = Design_Variable_MGEO_Real(min, max, σ, "Var. $i")
+        design_vars[i] = Design_Variable_MGEO_Real(min, max, σ, "Var. $i",
+                                                   perc_perturbation)
     end
 
     SVector{Nv, Design_Variable_MGEO_Real}(design_vars)
@@ -145,11 +155,20 @@ names `var_names`.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    function conf_design_vars(T::Type{Val{:MGEO_Real}}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, var_names::Vector{String}) where
+function conf_design_vars(T::Type{Val{:MGEO_Real}}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, var_names::Vector{String}, perc_perturbation::T4 = nothing) where {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
 
 This function configures the design variables specifying for each one the
 minimum `min` and maximum `max` values, the standard deviations `σ` used when
 modifying the variable, and the variable names `var_names`.
+
+If, for each variable, the element in the vector `perc_perturbation` is `true`,
+then the design variable will be perturbed using the following equation:
+
+    x = x + N(0, σ⋅x),
+
+in which `x` is the design variable value and `N(a,b)` is a sample from a Normal
+distribution with mean `a` and standard deviation `b`. If `perc_perturbation` is
+`nothing`, then it set to `true` for all variables.
 
 # Args
 
@@ -258,8 +277,9 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
                           min::Vector{T1},
                           max::Vector{T2},
                           σ::Vector{T3},
-                          var_names::Vector{String}) where
- 	{T1<:Number, T2<:Number, T3<:Number}
+                          var_names::Vector{String},
+                          perc_perturbation::T4 = nothing) where
+    {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
 
     # Check if the size of arrays is correct.
     Nv = length(min)
@@ -267,7 +287,8 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
     ( ( length(min)       != Nv ) ||
       ( length(max)       != Nv ) ||
       ( length(σ)         != Nv ) ||
-      ( length(var_names) != Nv ) ) &&
+      ( length(var_names) != Nv ) ||
+      ( (perc_perturbation != nothing) && (length(perc_perturbation) != Nv) ) ) &&
     @error("The size of the vectors does not match.")
 
     # Create the array of design variables.
@@ -280,10 +301,14 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
         # Check if standard deviation σ is higher than 0.
         ( σ[i] <= 0 ) && @error("The standard deviation must be higher than 0.")
 
+        perc_perturbation_i =
+            (perc_perturbation != nothing) ? perc_perturbation[i] : true
+
         design_vars[i] = Design_Variable_MGEO_Real(min[i],
                                                    max[i],
                                                    σ[i],
-                                                   var_names[i])
+                                                   var_names[i],
+                                                   perc_perturbation_i)
     end
 
     SVector{Nv, Design_Variable_MGEO_Real}(design_vars)
@@ -299,12 +324,20 @@ names will be selected as `Var. 1`, `Var. 2`, etc.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    function conf_design_vars(T::Type{Val{:MGEO_Real}}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}) where {T1<:Number, T2<:Number, T3<:Number}
+    function conf_design_vars(Val{:MGEO_Real}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, perc_perturbation::Bool = true) where {T1<:Number, T2<:Number, T3<:Number}
 
 This function configures the design variables specifying for each one the
 minimum `min` and maximum `max` values, and the standard deviations `σ` used
 when modifying the variable. The variable names will be selected as `Var. 1`,
 `Var. 2`, etc.
+
+If `perc_perturbation` is `true`, then the design variable will be perturbed
+using the following equation:
+
+    x = x + N(0, σ⋅x),
+
+in which `x` is the design variable and `N(a,b)` is a sample from a Normal
+distribution with mean `a` and standard deviation `b`.
 
 # Args
 
@@ -345,8 +378,9 @@ end
 function conf_design_vars(T::Type{Val{:MGEO_Real}},
                           min::Vector{T1},
                           max::Vector{T2},
-                          σ::Vector{T3}) where
-    {T1<:Number, T2<:Number, T3<:Number}
+                          σ::Vector{T3},
+                          perc_perturbation::T4 = nothing) where
+    {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
 
     # Create an array with variable names.
     var_names = Array{String}(undef, length(min))
@@ -355,7 +389,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
         var_names[i] = "Var. $i"
     end
 
-    conf_design_vars(T, min, max, σ, var_names)
+    conf_design_vars(T, min, max, σ, var_names, perc_perturbation)
 end
 
 """
