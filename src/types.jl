@@ -40,12 +40,12 @@ Structure that defines the design variables for MGEO Canonical.
 
 """
 struct Design_Variable_MGEO_Canonical
-	bits::Int64
-	min::Float64
-	max::Float64
-	full_scale::Int64
-	index::Int64
-	name::AbstractString
+    bits::Int64
+    min::Float64
+    max::Float64
+    full_scale::Int64
+    index::Int64
+    name::AbstractString
 end
 
 """
@@ -64,12 +64,12 @@ Structure that defines the design variables for MGEO Var.
 
 """
 struct Design_Variable_MGEO_Var
-	bits::Int64
-	min::Float64
-	max::Float64
-	full_scale::Int64
-	index::Int64
-	name::AbstractString
+    bits::Int64
+    min::Float64
+    max::Float64
+    full_scale::Int64
+    index::Int64
+    name::AbstractString
 end
 
 """
@@ -90,10 +90,10 @@ Structure that defines the design variables for MGEO Real.
 
 """
 struct Design_Variable_MGEO_Real
-	min::Float64
-	max::Float64
+    min::Float64
+    max::Float64
     σ::Float64
-	name::AbstractString
+    name::AbstractString
     perc_perturbation::Bool
 end
 
