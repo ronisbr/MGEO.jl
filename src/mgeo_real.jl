@@ -89,6 +89,12 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
     # Loop - Independent Runs
     # =======================
 
+    # List of all points created after the modification of population.
+    candidate_points = Vector{Pareto_Point{Nv,Nf}}(undef,Nv)
+
+    # Array to sort the candidate points.
+    f_rank = Vector{sRank_Real}(undef, Nv)
+
     @inbounds for run = 1:mgeod.run_max
         if show_debug
             println("--------------------------------------------------------------------------------")
@@ -121,12 +127,6 @@ function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Design_Variable_MGEO_Real},
             # Choose which objective function will be used to compute the
             # adaptability and to assemble the rank.
             chosen_func = rand(1:Nf)
-
-            # List of all points created after the modification of population.
-            candidate_points = Vector{Pareto_Point{Nv,Nf}}(undef,Nv)
-
-            # Array to sort the candidate points.
-            f_rank = Vector{sRank_Real}(undef, Nv)
 
             # Evaluate the objective functions using parallel computing.
             Threads.@threads for i=1:Nv
