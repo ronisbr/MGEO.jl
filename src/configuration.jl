@@ -20,7 +20,7 @@ the same number of bits `bits`, and maximum and minimum values `min` and `max`.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    conf_design_vars(Val{:MGEO_Real}, Nv::Int64, min::Number, max::Number, σ::Number, perc_perturbation::Bool = true)
+    conf_design_vars(Val(:MGEO_Real), Nv::Int64, min::Number, max::Number, σ::Number, perc_perturbation::Bool = true)
 
 This function configures `Nv` design variables in which all of them will have
 the same maximum and minimum values `min` and `max`, and the same standard
@@ -41,9 +41,9 @@ An array with the configured design variables.
 
 """
 conf_design_vars(Nv::Int64, bits::Int64, min::Number, max::Number) =
-    conf_design_vars(Val{:MGEO_Canonical}, Nv, bits, min, max)
+    conf_design_vars(Val(:MGEO_Canonical), Nv, bits, min, max)
 
-function conf_design_vars(T::Type{Val{:MGEO_Canonical}},
+function conf_design_vars(T::Val{:MGEO_Canonical},
                           Nv::Int64,
                           bits::Int64,
                           min::Number,
@@ -76,7 +76,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Canonical}},
     SVector{Nv, Design_Variable_MGEO_Canonical}(design_vars)
 end
 
-function conf_design_vars(T::Type{Val{:MGEO_Var}},
+function conf_design_vars(T::Val{:MGEO_Var},
                           Nv::Int64,
                           bits::Int64,
                           min::Number,
@@ -109,7 +109,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Var}},
     SVector{Nv, Design_Variable_MGEO_Var}(design_vars)
 end
 
-function conf_design_vars(T::Type{Val{:MGEO_Real}},
+function conf_design_vars(T::Val{:MGEO_Real},
                           Nv::Int64,
                           min::Number,
                           max::Number,
@@ -171,9 +171,9 @@ conf_design_vars(bits::Vector{Int64},
                  max::Vector{T2},
                  var_names::Vector{String}) where
     {T1<:Number, T2<:Number} =
-    conf_design_vars(Val{:MGEO_Canonical}, bits, min, max, var_names)
+    conf_design_vars(Val(:MGEO_Canonical), bits, min, max, var_names)
 
-function conf_design_vars(T::Type{Val{:MGEO_Canonical}},
+function conf_design_vars(T::Val{:MGEO_Canonical},
                           bits::Vector{Int64},
                           min::Vector{T1},
                           max::Vector{T2},
@@ -213,7 +213,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Canonical}},
     SVector{Nv, Design_Variable_MGEO_Canonical}(design_vars)
 end
 
-function conf_design_vars(T::Type{Val{:MGEO_Var}},
+function conf_design_vars(T::Val{:MGEO_Var},
                           bits::Vector{Int64},
                           min::Vector{T1},
                           max::Vector{T2},
@@ -253,7 +253,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Var}},
     SVector{Nv, Design_Variable_MGEO_Var}(design_vars)
 end
 
-function conf_design_vars(T::Type{Val{:MGEO_Real}},
+function conf_design_vars(T::Val{:MGEO_Real},
                           min::Vector{T1},
                           max::Vector{T2},
                           σ::Vector{T3},
@@ -327,10 +327,10 @@ An array with the configured design variables.
 conf_design_vars(bits::Vector{Int64},
                  min::Vector{T1},
                  max::Vector{T2}) where {T1<:Number, T2<:Number} =
-    conf_design_vars(Val{:MGEO_Canonical}, bits, min, max)
+    conf_design_vars(Val(:MGEO_Canonical), bits, min, max)
 
-function conf_design_vars(T::Union{Type{Val{:MGEO_Canonical}},
-								   Type{Val{:MGEO_Var}}},
+function conf_design_vars(T::Union{Val{:MGEO_Canonical},
+                                   Val{:MGEO_Var}},
                           bits::Vector{Int64},
                           min::Vector{T1},
                           max::Vector{T2}) where {T1<:Number, T2<:Number}
@@ -345,7 +345,7 @@ function conf_design_vars(T::Union{Type{Val{:MGEO_Canonical}},
     conf_design_vars(T, bits, min, max, var_names)
 end
 
-function conf_design_vars(T::Type{Val{:MGEO_Real}},
+function conf_design_vars(T::Val{:MGEO_Real},
                           min::Vector{T1},
                           max::Vector{T2},
                           σ::Vector{T3},
