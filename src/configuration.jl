@@ -50,13 +50,13 @@ function conf_design_vars(T::Val{:MGEO_Canonical},
                           max::Number)
 
     # Check if the number of design variables is greater than 1.
-    ( Nv <= 0 ) && @error("The number of design variables must be higher than 0.")
+    ( Nv <= 0 ) && error("The number of design variables must be higher than 0.")
 
     # Check if the number of bits are greater than 0.
-    ( bits <= 0 ) && @error("The number of bits must be higher than 0.")
+    ( bits <= 0 ) && error("The number of bits must be higher than 0.")
 
     # Check if the minimum value is smaller than maximum value.
-    ( min >= max ) && @error("The minimum value must be less than the maximum value for a variable.")
+    ( min >= max ) && error("The minimum value must be less than the maximum value for a variable.")
 
     # Create the array of design variables.
     design_vars = Vector{Design_Variable_MGEO_Canonical}(undef, Nv)
@@ -83,13 +83,13 @@ function conf_design_vars(T::Val{:MGEO_Var},
                           max::Number)
 
     # Check if the number of design variables is greater than 1.
-    ( Nv <= 0 ) && @error("The number of design variables must be higher than 0.")
+    ( Nv <= 0 ) && error("The number of design variables must be higher than 0.")
 
     # Check if the number of bits are greater than 0.
-    ( bits <= 0 ) && @error("The number of bits must be higher than 0.")
+    ( bits <= 0 ) && error("The number of bits must be higher than 0.")
 
     # Check if the minimum value is smaller than maximum value.
-    ( min >= max ) && @error("The minimum value must be less than the maximum value for a variable.")
+    ( min >= max ) && error("The minimum value must be less than the maximum value for a variable.")
 
     # Create the array of design variables.
     design_vars = Vector{Design_Variable_MGEO_Var}(undef, Nv)
@@ -117,13 +117,13 @@ function conf_design_vars(T::Val{:MGEO_Real},
                           perc_perturbation::Bool = true)
 
     # Check if the number of design variables is greater than 1.
-    ( Nv <= 0 ) && @error("The number of design variables must be higher than 0.")
+    ( Nv <= 0 ) && error("The number of design variables must be higher than 0.")
 
     # Check if the minimum value is smaller than maximum value.
-    ( min >= max ) && @error("The minimum value must be less than the maximum value for a variable.")
+    ( min >= max ) && error("The minimum value must be less than the maximum value for a variable.")
 
     # Check if standard deviation σ is higher than 0.
-    ( σ <= 0 ) && @error("The standard deviation must be higher than 0.")
+    ( σ <= 0 ) && error("The standard deviation must be higher than 0.")
 
     # Create the array of design variables.
     design_vars = Vector{Design_Variable_MGEO_Real}(undef, Nv)
@@ -186,7 +186,7 @@ function conf_design_vars(T::Val{:MGEO_Canonical},
     ( ( length(min)       != Nv ) ||
       ( length(max)       != Nv ) ||
       ( length(var_names) != Nv ) ) &&
-    @error("The size of the vectors does not match.")
+      error("The size of the vectors does not match.")
 
     # Number of bits.
     num_bits = 0
@@ -226,7 +226,7 @@ function conf_design_vars(T::Val{:MGEO_Var},
     ( ( length(min)       != Nv ) ||
       ( length(max)       != Nv ) ||
       ( length(var_names) != Nv ) ) &&
-    @error("The size of the vectors does not match.")
+      error("The size of the vectors does not match.")
 
     # Number of bits.
     num_bits = 0
@@ -269,17 +269,17 @@ function conf_design_vars(T::Val{:MGEO_Real},
       ( length(σ)         != Nv ) ||
       ( length(var_names) != Nv ) ||
       ( (perc_perturbation != nothing) && (length(perc_perturbation) != Nv) ) ) &&
-    @error("The size of the vectors does not match.")
+      error("The size of the vectors does not match.")
 
     # Create the array of design variables.
     design_vars = Vector{Design_Variable_MGEO_Real}(undef, Nv)
 
     for i = 1:Nv
         # Check if the min value is smaller than max.
-        ( min[i] >= max[i] ) && @error("The minimum value must be less than the maximum value for a variable.")
+        ( min[i] >= max[i] ) && error("The minimum value must be less than the maximum value for a variable.")
 
         # Check if standard deviation σ is higher than 0.
-        ( σ[i] <= 0 ) && @error("The standard deviation must be higher than 0.")
+        ( σ[i] <= 0 ) && error("The standard deviation must be higher than 0.")
 
         perc_perturbation_i =
             (perc_perturbation != nothing) ? perc_perturbation[i] : true
@@ -393,7 +393,7 @@ function conf_mgeo(Nf::Int64,
                    mgeo_eps::Float64 = 1e-10) where {Nv,T}
 
     # Check if the number of objective functions is higher than 1.
-    ( Nf <= 0 ) && @error("The number of objective functions must be higher than 0.")
+    ( Nf <= 0 ) && error("The number of objective functions must be higher than 0.")
 
     MGEO_Structure{Nv, Nf, T}(τ, ngen_max, run_max, design_vars, mgeo_eps)
 end
