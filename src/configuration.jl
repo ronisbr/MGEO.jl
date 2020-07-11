@@ -1,6 +1,7 @@
-
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Description
+# ==============================================================================
 #
 #   Functions to configure the MGEO.
 #
@@ -11,7 +12,7 @@
 ################################################################################
 
 """
-    function conf_design_vars(T, Nv::Int64, bits::Int64, min::Number, max::Number)
+    conf_design_vars(T, Nv::Int64, bits::Int64, min::Number, max::Number)
 
 This function configures `Nv` design variables in which all of them will have
 the same number of bits `bits`, and maximum and minimum values `min` and `max`.
@@ -19,7 +20,7 @@ the same number of bits `bits`, and maximum and minimum values `min` and `max`.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    function conf_design_vars(Val{:MGEO_Real}, Nv::Int64, min::Number, max::Number, σ::Number, perc_perturbation::Bool = true)
+    conf_design_vars(Val{:MGEO_Real}, Nv::Int64, min::Number, max::Number, σ::Number, perc_perturbation::Bool = true)
 
 This function configures `Nv` design variables in which all of them will have
 the same maximum and minimum values `min` and `max`, and the same standard
@@ -136,7 +137,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
 end
 
 """
-    function conf_design_vars(T, bits::Vector{Int64}, min::Vector{T1}, max::Vector{T2}, var_names::Vector{String}) where {T1<:Number, T2<:Number}
+    conf_design_vars(T, bits::Vector{Int64}, min::Vector{T1}, max::Vector{T2}, var_names::Vector{String}) where {T1<:Number, T2<:Number}
 
 This function configures the design variables specifying for each one the number
 of bits `bits`, the minimum `min` and maximum `max` values, and the variable
@@ -145,7 +146,7 @@ names `var_names`.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-function conf_design_vars(T::Type{Val{:MGEO_Real}}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, var_names::Vector{String}, perc_perturbation::T4 = nothing) where {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
+    conf_design_vars(T::Type{Val{:MGEO_Real}}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, var_names::Vector{String}, perc_perturbation::T4 = nothing) where {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
 
 This function configures the design variables specifying for each one the
 minimum `min` and maximum `max` values, the standard deviations `σ` used when
@@ -294,7 +295,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
 end
 
 """
-    function conf_design_vars(bits::Vector{Int64}, min::Vector{T1}, max::Vector{T2}) where {T1<:Number, T2<:Number}
+    conf_design_vars(bits::Vector{Int64}, min::Vector{T1}, max::Vector{T2}) where {T1<:Number, T2<:Number}
 
 This function configures the design variables specifying for each one the number
 of bits `bits`, and the minimum `min` and maximum `max` values. The variable
@@ -303,7 +304,7 @@ names will be selected as `Var. 1`, `Var. 2`, etc.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    function conf_design_vars(Val{:MGEO_Real}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, perc_perturbation::Bool = true) where {T1<:Number, T2<:Number, T3<:Number}
+    conf_design_vars(Val{:MGEO_Real}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, perc_perturbation::Bool = true) where {T1<:Number, T2<:Number, T3<:Number}
 
 This function configures the design variables specifying for each one the
 minimum `min` and maximum `max` values, and the standard deviations `σ` used
@@ -362,7 +363,7 @@ function conf_design_vars(T::Type{Val{:MGEO_Real}},
 end
 
 """
-    function conf_mgeo(Nf::Int64, τ::Float64, ngen_max::Int64, run_max::Int64, design_vars::SVector{Nv, T}, mgeo_eps::Float64 = 1e-10) where {Nv,T}
+    conf_mgeo(Nf::Int64, τ::Float64, ngen_max::Int64, run_max::Int64, design_vars::SVector{Nv, T}, mgeo_eps::Float64 = 1e-10) where {Nv,T}
 
 Configure the MGEO.
 

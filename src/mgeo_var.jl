@@ -1,6 +1,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Description
+# ==============================================================================
 #
 #   Function to run the MGEO Var.
 #
@@ -18,7 +19,7 @@
 export mgeo_run
 
 """
-    function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Var}}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
+    mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Var}}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
 
 Run the MGEO Var configured in `mgeod` using the objective functions `f_obj`.
 The algorithm was based in [1].

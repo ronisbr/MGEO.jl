@@ -1,6 +1,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Description
+# ==============================================================================
 #
 #   Function to run the MGEO Canonical.
 #
@@ -19,7 +20,7 @@
 export mgeo_run
 
 """
-    function mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Canonical}}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
+    mgeo_run(mgeod::MGEO_Structure{Nv, Nf, Val{:MGEO_Canonical}}, f_obj::Function, show_debug::Bool = false) where {Nv, Nf}
 
 Run the MGEO Canonical configured in `mgeod` using the objective functions
 `f_obj`. The algorithm was based in [1].

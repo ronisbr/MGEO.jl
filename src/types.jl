@@ -1,6 +1,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Description
+# ==============================================================================
 #
 #   Definition of the types and structures.
 #
@@ -181,4 +182,3 @@ struct sRank_Real
     var_value::Float64
     f::Float64
 end
-
