@@ -12,7 +12,7 @@
 ################################################################################
 
 """
-    conf_design_vars(T, Nv::Int64, bits::Int64, min::Number, max::Number)
+    conf_design_vars(T, Nv::Integer, bits::Integer, min::Number, max::Number)
 
 This function configures `Nv` design variables in which all of them will have
 the same number of bits `bits`, and maximum and minimum values `min` and `max`.
@@ -20,7 +20,7 @@ the same number of bits `bits`, and maximum and minimum values `min` and `max`.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    conf_design_vars(Val(:MGEO_Real), Nv::Int64, min::Number, max::Number, σ::Number, perc_perturbation::Bool = true)
+    conf_design_vars(T::Val{:MGEO_Real}, Nv::Integer, min::Number, max::Number, σ::Number, perc_perturbation::Bool = true)
 
 This function configures `Nv` design variables in which all of them will have
 the same maximum and minimum values `min` and `max`, and the same standard
@@ -40,12 +40,12 @@ distribution with mean `a` and standard deviation `b`.
 An array with the configured design variables.
 
 """
-conf_design_vars(Nv::Int64, bits::Int64, min::Number, max::Number) =
+conf_design_vars(Nv::Integer, bits::Integer, min::Number, max::Number) =
     conf_design_vars(Val(:MGEO_Canonical), Nv, bits, min, max)
 
 function conf_design_vars(T::Val{:MGEO_Canonical},
-                          Nv::Int64,
-                          bits::Int64,
+                          Nv::Integer,
+                          bits::Integer,
                           min::Number,
                           max::Number)
 
@@ -73,12 +73,12 @@ function conf_design_vars(T::Val{:MGEO_Canonical},
                                                         "Var. $i")
     end
 
-    SVector{Nv, Design_Variable_MGEO_Canonical}(design_vars)
+    return SVector{Nv, Design_Variable_MGEO_Canonical}(design_vars)
 end
 
 function conf_design_vars(T::Val{:MGEO_Var},
-                          Nv::Int64,
-                          bits::Int64,
+                          Nv::Integer,
+                          bits::Integer,
                           min::Number,
                           max::Number)
 
@@ -106,11 +106,11 @@ function conf_design_vars(T::Val{:MGEO_Var},
                                                   "Var. $i")
     end
 
-    SVector{Nv, Design_Variable_MGEO_Var}(design_vars)
+    return SVector{Nv, Design_Variable_MGEO_Var}(design_vars)
 end
 
 function conf_design_vars(T::Val{:MGEO_Real},
-                          Nv::Int64,
+                          Nv::Integer,
                           min::Number,
                           max::Number,
                           σ::Number,
@@ -133,11 +133,11 @@ function conf_design_vars(T::Val{:MGEO_Real},
                                                    perc_perturbation)
     end
 
-    SVector{Nv, Design_Variable_MGEO_Real}(design_vars)
+    return SVector{Nv, Design_Variable_MGEO_Real}(design_vars)
 end
 
 """
-    conf_design_vars(T, bits::Vector{Int64}, min::Vector{T1}, max::Vector{T2}, var_names::Vector{String}) where {T1<:Number, T2<:Number}
+    conf_design_vars(bits::AbstractVector{T1}, min::AbstractVector{T2}, max::AbstractVector{T3}, var_names::AbstractVector{String}) where {T1<:Integer, T2<:Number, T3<:Number} =
 
 This function configures the design variables specifying for each one the number
 of bits `bits`, the minimum `min` and maximum `max` values, and the variable
@@ -146,7 +146,7 @@ names `var_names`.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    conf_design_vars(T::Type{Val{:MGEO_Real}}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, var_names::Vector{String}, perc_perturbation::T4 = nothing) where {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
+    conf_design_vars(T::Val{:MGEO_Real}, min::AbstractVector{T1}, max::AbstractVector{T2}, σ::AbstractVector{T3}, var_names::AbstractVector{String}, perc_perturbation::T4 = nothing) where {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
 
 This function configures the design variables specifying for each one the
 minimum `min` and maximum `max` values, the standard deviations `σ` used when
@@ -166,19 +166,19 @@ distribution with mean `a` and standard deviation `b`. If `perc_perturbation` is
 An array with the configured design variables.
 
 """
-conf_design_vars(bits::Vector{Int64},
-                 min::Vector{T1},
-                 max::Vector{T2},
-                 var_names::Vector{String}) where
-    {T1<:Number, T2<:Number} =
+conf_design_vars(bits::AbstractVector{T1},
+                 min::AbstractVector{T2},
+                 max::AbstractVector{T3},
+                 var_names::AbstractVector{String}) where
+    {T1<:Integer, T2<:Number, T3<:Number} =
     conf_design_vars(Val(:MGEO_Canonical), bits, min, max, var_names)
 
 function conf_design_vars(T::Val{:MGEO_Canonical},
-                          bits::Vector{Int64},
-                          min::Vector{T1},
-                          max::Vector{T2},
-                          var_names::Vector{String}) where
- 	{T1<:Number, T2<:Number}
+                          bits::AbstractVector{T1},
+                          min::AbstractVector{T2},
+                          max::AbstractVector{T3},
+                          var_names::AbstractVector{String}) where
+ 	{T1<:Integer, T2<:Number, T3<:Number}
 
     # Check if the size of arrays is correct.
     Nv = length(bits)
@@ -210,15 +210,15 @@ function conf_design_vars(T::Val{:MGEO_Canonical},
         num_bits += bits[i]
     end
 
-    SVector{Nv, Design_Variable_MGEO_Canonical}(design_vars)
+    return SVector{Nv, Design_Variable_MGEO_Canonical}(design_vars)
 end
 
 function conf_design_vars(T::Val{:MGEO_Var},
-                          bits::Vector{Int64},
-                          min::Vector{T1},
-                          max::Vector{T2},
-                          var_names::Vector{String}) where
- 	{T1<:Number, T2<:Number}
+                          bits::AbstractVector{T1},
+                          min::AbstractVector{T2},
+                          max::AbstractVector{T3},
+                          var_names::AbstractVector{String}) where
+    {T1<:Integer, T2<:Number, T3<:Number}
 
     # Check if the size of arrays is correct.
     Nv = length(bits)
@@ -250,14 +250,14 @@ function conf_design_vars(T::Val{:MGEO_Var},
         num_bits += bits[i]
     end
 
-    SVector{Nv, Design_Variable_MGEO_Var}(design_vars)
+    return SVector{Nv, Design_Variable_MGEO_Var}(design_vars)
 end
 
 function conf_design_vars(T::Val{:MGEO_Real},
-                          min::Vector{T1},
-                          max::Vector{T2},
-                          σ::Vector{T3},
-                          var_names::Vector{String},
+                          min::AbstractVector{T1},
+                          max::AbstractVector{T2},
+                          σ::AbstractVector{T3},
+                          var_names::AbstractVector{String},
                           perc_perturbation::T4 = nothing) where
     {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
 
@@ -291,11 +291,11 @@ function conf_design_vars(T::Val{:MGEO_Real},
                                                    perc_perturbation_i)
     end
 
-    SVector{Nv, Design_Variable_MGEO_Real}(design_vars)
+    return SVector{Nv, Design_Variable_MGEO_Real}(design_vars)
 end
 
 """
-    conf_design_vars(bits::Vector{Int64}, min::Vector{T1}, max::Vector{T2}) where {T1<:Number, T2<:Number}
+    conf_design_vars(T, bits::AbstractVector{T1}, min::AbstractVector{T2}, max::AbstractVector{T3}) where {T1<:Integer, T2<:Number, T3<:Number}
 
 This function configures the design variables specifying for each one the number
 of bits `bits`, and the minimum `min` and maximum `max` values. The variable
@@ -304,7 +304,7 @@ names will be selected as `Var. 1`, `Var. 2`, etc.
 The parameter `T` selects which MGEO algorithm will be used and it can be
 `MGEO_Canonical()` (**Default**) or `MGEO_Var()`.
 
-    conf_design_vars(Val{:MGEO_Real}, min::Vector{T1}, max::Vector{T2}, σ::Vector{T3}, perc_perturbation::Bool = true) where {T1<:Number, T2<:Number, T3<:Number}
+    conf_design_vars(T::Val{:MGEO_Real}, min::AbstractVector{T1}, max::AbstractVector{T2}, σ::AbstractVector{T3}, perc_perturbation::T4 = nothing)
 
 This function configures the design variables specifying for each one the
 minimum `min` and maximum `max` values, and the standard deviations `σ` used
@@ -324,42 +324,44 @@ distribution with mean `a` and standard deviation `b`.
 An array with the configured design variables.
 
 """
-conf_design_vars(bits::Vector{Int64},
-                 min::Vector{T1},
-                 max::Vector{T2}) where {T1<:Number, T2<:Number} =
+conf_design_vars(bits::AbstractVector{T1},
+                 min::AbstractVector{T2},
+                 max::AbstractVector{T3}) where
+    {T1<:Integer, T2<:Number, T3<:Number} =
     conf_design_vars(Val(:MGEO_Canonical), bits, min, max)
 
 function conf_design_vars(T::Union{Val{:MGEO_Canonical},
                                    Val{:MGEO_Var}},
-                          bits::Vector{Int64},
-                          min::Vector{T1},
-                          max::Vector{T2}) where {T1<:Number, T2<:Number}
+                          bits::AbstractVector{T1},
+                          min::AbstractVector{T2},
+                          max::AbstractVector{T3}) where
+    {T1<:Integer, T2<:Number, T3<:Number}
 
     # Create an array with variable names.
     var_names = Array{String}(undef, length(bits))
 
-    for i=1:length(var_names)
+    @inbounds for i=1:length(var_names)
         var_names[i] = "Var. $i"
     end
 
-    conf_design_vars(T, bits, min, max, var_names)
+    return conf_design_vars(T, bits, min, max, var_names)
 end
 
 function conf_design_vars(T::Val{:MGEO_Real},
-                          min::Vector{T1},
-                          max::Vector{T2},
-                          σ::Vector{T3},
+                          min::AbstractVector{T1},
+                          max::AbstractVector{T2},
+                          σ::AbstractVector{T3},
                           perc_perturbation::T4 = nothing) where
     {T1<:Number, T2<:Number, T3<:Number, T4<:Union{Nothing, Vector{Bool}}}
 
     # Create an array with variable names.
     var_names = Array{String}(undef, length(min))
 
-    for i=1:length(var_names)
+    @inbounds for i=1:length(var_names)
         var_names[i] = "Var. $i"
     end
 
-    conf_design_vars(T, min, max, σ, var_names, perc_perturbation)
+    return conf_design_vars(T, min, max, σ, var_names, perc_perturbation)
 end
 
 """
@@ -385,15 +387,15 @@ The MGEO algorithm that will be used will be the same configured in
 An instance of the structure `MGEO_Structure` with the MGEO configuration.
 
 """
-function conf_mgeo(Nf::Int64,
-                   τ::Float64,
-                   ngen_max::Int64,
-                   run_max::Int64,
+function conf_mgeo(Nf::Integer,
+                   τ::Number,
+                   ngen_max::Integer,
+                   run_max::Integer,
                    design_vars::SVector{Nv, T},
-                   mgeo_eps::Float64 = 1e-10) where {Nv,T}
+                   mgeo_eps::Number = 1e-10) where {Nv,T}
 
     # Check if the number of objective functions is higher than 1.
     ( Nf <= 0 ) && error("The number of objective functions must be higher than 0.")
 
-    MGEO_Structure{Nv, Nf, T}(τ, ngen_max, run_max, design_vars, mgeo_eps)
+    return MGEO_Structure{Nv, Nf, T}(τ, ngen_max, run_max, design_vars, mgeo_eps)
 end
